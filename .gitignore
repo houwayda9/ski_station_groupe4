@@ -1,0 +1,28 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Logs
+log/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Compiled Java classes
+*.class
+
+# Compiled Java target
+*.war
+*.ear
+*.jar
+
+# Maven specific
+maven.log
