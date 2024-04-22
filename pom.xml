@@ -77,6 +77,10 @@
 			<id>deploymentRepo</id>
 			<url>http://localhost:8081/repository/nexus-repo-devops/</url>
 		</repository>
+		<snapshotRepository>
+        	<id>snapshotRepo</id>
+        	<url>http://localhost:8081/repository/maven-snapshots/</url>
+    	</snapshotRepository>
 	</distributionManagement>
 
 </project>
