@@ -49,9 +49,12 @@ public class SkierServicesImpl implements ISkierServices {
     public Skier assignSkierToSubscription(Long numSkier, Long numSubscription) {
         Skier skier = skierRepository.findById(numSkier).orElse(null);
         Subscription subscription = subscriptionRepository.findById(numSubscription).orElse(null);
-        assert skier != null;
-        skier.setSubscription(subscription);
-        return skierRepository.save(skier);
+        if (skier != null && subscription != null) {
+            skier.setSubscription(subscription);
+            return skierRepository.save(skier);
+        } else {
+            throw new IllegalArgumentException("Skier or Subscription not found");
+        }
     }
 
     @Override
@@ -81,16 +84,29 @@ public class SkierServicesImpl implements ISkierServices {
     public Skier assignSkierToPiste(Long numSkieur, Long numPiste) {
         Skier skier = skierRepository.findById(numSkieur).orElse(null);
         Piste piste = pisteRepository.findById(numPiste).orElse(null);
-        try {
-            assert skier != null;
-            skier.getPistes().add(piste);
-        } catch (NullPointerException exception) {
-            Set<Piste> pisteList = new HashSet<>();
-            pisteList.add(piste);
-            skier.setPistes(pisteList);
-        }
+//        try {
+//            skier.getPistes().add(piste);
+//        } catch (NullPointerException exception) {
+//            Set<Piste> pisteList = new HashSet<>();
+//            pisteList.add(piste);
+//            skier.setPistes(pisteList);
+//        }
+        if (skier != null) {
 
-        return skierRepository.save(skier);
+            Set<Piste> pistes = skier.getPistes();
+            if (pistes == null) {
+                pistes = new HashSet<>();
+            }
+
+            pistes.add(piste);
+
+            skier.setPistes(pistes);
+
+            return skierRepository.save(skier);
+        } else {
+            throw new IllegalArgumentException("Skier not found");
+        }
+    
     }
 
     @Override
