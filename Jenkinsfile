@@ -37,7 +37,7 @@ stage ('MVN test') {
 
 stage ('MVN SONAR') {
     steps {
-        sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=hou99'
+        sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=nexus'
     }
 }
 
@@ -71,7 +71,7 @@ stage('Docker Compose') {
                     sh 'docker-compose build'
                     def gitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
                     
-                    def gitHashTaggedImage = "houwayda/devops_esprit:${env.BUILD_NUMBER}"
+                    def gitHashTaggedImage = "eyabennasr/ski:${env.BUILD_NUMBER}"
                     
                    
                     sh "docker tag springboot-app $gitHashTaggedImage"
@@ -90,11 +90,7 @@ stage('Docker Compose') {
                 }
             }
         }
-stage('Trigger ManifestUpdate') {
-                steps {
-                echo "triggering updatemanifestjob"
-                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
-        }}
+
 
 
 }}
