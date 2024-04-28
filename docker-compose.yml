@@ -16,7 +16,7 @@ services:
     container_name: mysqldb
     image: mysql
     volumes:
-      -  /home/gouia/Desktop/db:/var/lib/mysql
+      -  /home/azyz/Desktop/db:/var/lib/mysql
     ports: 
      - 3307:3306   
     environment:
