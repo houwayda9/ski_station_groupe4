@@ -11,9 +11,10 @@ pipeline {
 }
     agent any
     stages {
-         stage('MVN CLEAN'){
+         stage('MVN CLEAN && MVN INSTALL'){
             steps {
                 sh 'mvn clean'
+                sh 'mvn install'
             }
          }
              stage('ARTIFACT CONSTRUCTION') {
