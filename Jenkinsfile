@@ -52,7 +52,7 @@ pipeline {
  
                     // Push the images to Docker Hub
 
-                    docker.withRegistry('', 'registryCredential') {
+                    docker.withRegistry('', 'dockerHub') {
                         sh "docker push $gitHashTaggedImage"
                 }
 
