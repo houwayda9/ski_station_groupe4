@@ -11,13 +11,6 @@ pipeline {
 }
     agent any
     stages {
-        stage('Récupération du code source') {
-            steps {
-                 
-                git branch:"${params.azyzbranch}", url: 'https://github.com/houwayda9/ski_station_groupe4.git'
-
-            }
-        }
          stage('MVN CLEAN'){
             steps {
                 sh 'mvn clean'
