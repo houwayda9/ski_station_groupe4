@@ -46,7 +46,7 @@ stage ('MVN DEPLOY TO NEXUS') {
                 nexusArtifactUploader(
         nexusVersion: 'nexus3',
         protocol: 'http',
-        nexusUrl: 'localhost:8081',
+        nexusUrl: 'localhost:8082',
         groupId: 'pom.tn.esprit.spring',
         version: 'pom.4.0.0',
         repository: 'maven-nexus-repo',
