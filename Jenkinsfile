@@ -37,7 +37,7 @@ stage ('MVN test') {
 
 stage ('MVN SONAR') {
     steps {
-        sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=nexus'
+        sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=admin'
     }
 }
 
