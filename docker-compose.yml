@@ -1,0 +1,28 @@
+version: "3"
+services: 
+  springboot-app:
+   # container_name: spring-app
+    image: springboot-app
+    restart: always
+    build: .
+    ports:
+      - 9089:9089 
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_PORT: 3306
+    depends_on:
+      - mysqldb
+      
+  mysqldb: 
+    container_name: mysqldb
+    image: mysql
+    volumes:
+      -  /home/gouia/Desktop/db:/var/lib/mysql
+    ports: 
+     - 3307:3306   
+    environment:
+      MYSQL_DATABASE: stationSki
+      MYSQL_ROOT_PASSWORD: root
+
