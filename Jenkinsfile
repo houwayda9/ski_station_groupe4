@@ -50,7 +50,7 @@ stage ('MVN DEPLOY TO NEXUS') {
         groupId: 'pom.tn.esprit.spring',
         version: 'pom.4.0.0',
         repository: 'maven-nexus-repo',
-        credentialsId: 'NEXUS_CRED',
+        credentialsId: 'NEXUS_CFED',
         artifacts: [
             [artifactId: 'pom.gestion-station-ski',
              classifier: '',
