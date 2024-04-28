@@ -1,58 +1,100 @@
 pipeline {
-    environment {
-      registry  = "eya/devops_esprit"
-      registryCredential = 'dockerHub'
-      NEXUS_VERSION = "nexus3"
-      NEXUS_PROTOCOL = "http"
-      NEXUS_URL="172.16.1.251:8081"
-      NEXUS_REPOSITORY = "maven_nexus_repo"
-      NEXUS_CREDENTIAL_ID = "nexus-user-credentials"
-      dockerImage = ''
-}
+ 
+   
+ 
+
+ 
     agent any
+
     stages {
-         stage('MVN CLEAN && MVN INSTALL'){
+
+
+
+
+
+
+stage('ARTIFACT CONSTRUCTION') {
             steps {
-                sh 'mvn clean'
-                sh 'mvn install'
-            }
-         }
-             stage('ARTIFACT CONSTRUCTION') {
-            steps {
-                echo 'ARTIFACT CONSTRUCTION...'
+                echo 'Constructing artifact'
                 sh 'mvn package -Dmaven.test.skip=true'
             }
         }
-   
-            stage('MVN SONARQUBE') {
+
+
+stage ('MVN COMPILE') {
+    steps {
+        sh 'mvn compile'
+    }
+}
+stage ('MVN test') {
+    steps {
+        sh 'mvn test'
+    }
+}
+
+
+
+
+stage ('MVN SONAR') {
+    steps {
+        sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=hou99'
+    }
+}
+
+stage ('MVN DEPLOY TO NEXUS') {
             steps {
-                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=sonar'
+                nexusArtifactUploader(
+        nexusVersion: 'nexus3',
+        protocol: 'http',
+        nexusUrl: 'localhost:8081',
+        groupId: 'pom.tn.esprit.spring',
+        version: 'pom.4.0.0',
+        repository: 'maven-nexus-repo',
+        credentialsId: 'NEXUS_CRED',
+        artifacts: [
+            [artifactId: 'pom.gestion-station-ski',
+             classifier: '',
+             file: "pom.xml" ,
+             type: "pom"]
+        ]
+     )
             }
         }
-        
-  stage('publish to nexus'){
 
-           steps{
 
-              sh 'mvn deploy -DrepositoryId=${NEXUS_CREDENTIAL_ID} -Drepository.url=${NEXUS_URL}/repository/${NEXUS_REPOSITORY}'
 
-            }
 
-        }
-      
-  stage('Docker Compose') {
+stage('Docker Compose') {
             steps {
                 script {
                     // Run Docker Compose
                     sh 'docker-compose build'
                     def gitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
-                    def gitHashTaggedImage = "eya/devops_esprit:${env.BUILD_NUMBER}"
+                    
+                    def gitHashTaggedImage = "houwayda/devops_esprit:${env.BUILD_NUMBER}"
+                    
+                   
                     sh "docker tag springboot-app $gitHashTaggedImage"
+
                     // Push the images to Docker Hub
-                    docker.withRegistry('', 'dockerHub') {
+                    
+                    
+                    docker.withRegistry('', 'registryCredential') {
                         sh "docker push $gitHashTaggedImage"
+                    
+                   
                 }
+                 
+                
+                
                 }
             }
-        }     
+        }
+stage('Trigger ManifestUpdate') {
+                steps {
+                echo "triggering updatemanifestjob"
+                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+        }}
+
+
 }}
