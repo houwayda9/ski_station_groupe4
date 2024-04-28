@@ -33,8 +33,12 @@ public class RegistrationServicesImpl implements  IRegistrationServices{
     public Registration assignRegistrationToCourse(Long numRegistration, Long numCourse) {
         Registration registration = registrationRepository.findById(numRegistration).orElse(null);
         Course course = courseRepository.findById(numCourse).orElse(null);
-        registration.setCourse(course);
-        return registrationRepository.save(registration);
+        if (registration != null) {
+            registration.setCourse(course);
+            return registrationRepository.save(registration);
+        } else {
+            throw new IllegalArgumentException("Registration not found");
+        }
     }
 
     @Transactional

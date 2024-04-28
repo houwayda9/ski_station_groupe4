@@ -84,13 +84,7 @@ public class SkierServicesImpl implements ISkierServices {
     public Skier assignSkierToPiste(Long numSkieur, Long numPiste) {
         Skier skier = skierRepository.findById(numSkieur).orElse(null);
         Piste piste = pisteRepository.findById(numPiste).orElse(null);
-//        try {
-//            skier.getPistes().add(piste);
-//        } catch (NullPointerException exception) {
-//            Set<Piste> pisteList = new HashSet<>();
-//            pisteList.add(piste);
-//            skier.setPistes(pisteList);
-//        }
+
         if (skier != null) {
 
             Set<Piste> pistes = skier.getPistes();
@@ -106,7 +100,7 @@ public class SkierServicesImpl implements ISkierServices {
         } else {
             throw new IllegalArgumentException("Skier not found");
         }
-    
+
     }
 
     @Override
