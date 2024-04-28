@@ -1,17 +1,8 @@
 pipeline {
  
-   
- 
-
- 
-    agent any
+   agent any
 
     stages {
-
-
-
-
-
 
 stage('ARTIFACT CONSTRUCTION') {
             steps {
@@ -32,12 +23,9 @@ stage ('MVN test') {
     }
 }
 
-
-
-
 stage ('MVN SONAR') {
     steps {
-        sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=hou99'
+        sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=azerty'
     }
 }
 
@@ -61,9 +49,6 @@ stage ('MVN DEPLOY TO NEXUS') {
             }
         }
 
-
-
-
 stage('Docker Compose') {
             steps {
                 script {
@@ -71,13 +56,10 @@ stage('Docker Compose') {
                     sh 'docker-compose build'
                     def gitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
                     
-                    def gitHashTaggedImage = "houwayda/devops_esprit:${env.BUILD_NUMBER}"
+                    def gitHashTaggedImage = "yasminemarzouk/devopsproject:${env.BUILD_NUMBER}"
                     
                    
                     sh "docker tag springboot-app $gitHashTaggedImage"
-
-                    // Push the images to Docker Hub
-                    
                     
                     docker.withRegistry('', 'registryCredential') {
                         sh "docker push $gitHashTaggedImage"
@@ -89,11 +71,6 @@ stage('Docker Compose') {
                 }
             }
         }
-stage('Trigger ManifestUpdate') {
-                steps {
-                echo "triggering updatemanifestjob"
-                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
-        }}
 
 
 }}
