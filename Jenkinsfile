@@ -46,7 +46,7 @@ pipeline {
                     // Run Docker Compose
                     sh 'docker-compose build'
                     def gitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
-                    def gitHashTaggedImage = "azyzdarragi/devops_esprit:${env.BUILD_NUMBER}"
+                    def gitHashTaggedImage = "eya/devops_esprit:${env.BUILD_NUMBER}"
                     sh "docker tag springboot-app $gitHashTaggedImage"
                     // Push the images to Docker Hub
                     docker.withRegistry('', 'dockerHub') {
