@@ -1,7 +1,7 @@
 services:
   mysqldb:
     container_name: mysqldb
-    image: mysql
+    image: mysql:5.1.49
     restart: unless-stopped
     volumes:
       - /home/jaouher/Desktop/db:/var/lib/mysql
