@@ -4,7 +4,7 @@ services:
     image: mysql:5.1.49
     restart: unless-stopped
     volumes:
-      - /home/jaouher/Desktop/db:/var/lib/mysql
+      - /home/jaouher/db:/var/lib/mysql
     ports:
       - 3306:3306
     environment:
