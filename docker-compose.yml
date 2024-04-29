@@ -1,5 +1,20 @@
 version: "3"
 services: 
+
+
+
+
+   mysqldb: 
+    container_name: mysqldb
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - /home/mysql/data:/var/lib/mysql
+
+      
   springboot-app:
     depends_on:
       - mysqldb
@@ -21,15 +36,7 @@ services:
     tty: true   
     
       
-  mysqldb: 
-    container_name: mysqldb
-    image: mysql:8
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_USER: root
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-      - /home/mysql/data:/var/lib/mysql
+
 
     
     
