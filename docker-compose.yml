@@ -1,23 +1,30 @@
-version: "3"
 services:
-  springboot-app:
-    image: springboot-app
-    restart: always
-    build: .
-    ports:
-      - 8089:8089
-    environment:
-      MYSQL_HOST: mysqldb
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_PORT: 3306
   mysqldb:
     container_name: mysqldb
     image: mysql
+    restart: unless-stopped
     volumes:
-      -  /home/jaouher/Desktop/db:/var/lib/mysql
+      - /home/jaouher/Desktop/db:/var/lib/mysql
     ports:
       - 3306:3306
     environment:
-      MYSQL_DATABASE: skiStationApp
+      MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: root
+  springboot-app:
+    depends_on:
+      - mysqldb
+    image: jaouherbelhadj/devops_validation
+    restart: on-failure
+    ports:
+      - 8089:8089
+    environment:
+      SPRING_APPLICATION_JSON: '{
+              "spring.datasource.url": "jdbc:mysql://mysqldb:3306/skiStationApp?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
+              "spring.datasource.username": "root",
+              "spring.datasource.password": "root",
+              "spring.jpa.show-sql": true,
+              "spring.jpa.hibernate.ddl-auto": "update",
+              "spring.jpa.properties.hibernate.dialect": "org.hibernate.dialect.MySQL5InnoDBDialect"
+              }'
+      stdin_open: true
+      tty: true
