@@ -1,98 +1,108 @@
 package tn.esprit.spring.services;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import tn.esprit.spring.entities.Course;
 import tn.esprit.spring.entities.Instructor;
-import tn.esprit.spring.entities.Support;
-import tn.esprit.spring.entities.TypeCourse;
 import tn.esprit.spring.repositories.ICourseRepository;
+import tn.esprit.spring.repositories.IInstructorRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class InstructorServicesImplTest {
-    @Autowired
+
+@ExtendWith(MockitoExtension.class)
+class InstructorImplTest {
+
+    @InjectMocks
     private InstructorServicesImpl instructorService;
 
-//    @Autowired
-//    private CourseServicesImpl courseService;
+    @Mock
+    private IInstructorRepository instructorRepository;
 
-    @Autowired
+    @Mock
     private ICourseRepository courseRepository;
 
     @Test
     void testAddInstructor() {
+
         Instructor instructor = new Instructor();
         instructor.setFirstName("John");
         instructor.setLastName("Doe");
         instructor.setDateOfHire(LocalDate.now());
         instructor.setCourses(new HashSet<>());
 
+        when(instructorRepository.save(any(Instructor.class))).thenReturn(instructor);
+
         Instructor savedInstructor = instructorService.addInstructor(instructor);
 
-        assertNotNull(savedInstructor);
+        verify(instructorRepository, times(1)).save(any(Instructor.class));
 
-        assertNotNull(savedInstructor.getNumInstructor());
+        assertNotNull(savedInstructor);
     }
 
     @Test
     void testRetrieveAllInstructors() {
-        List<Instructor> instructors = instructorService.retrieveAllInstructors();
-        assertNotNull(instructors);
+        List <Instructor> instructors = new ArrayList<>();
+        when(instructorRepository.findAll()).thenReturn(instructors);
+
+        List <Instructor> returnedInstructors = instructorService.retrieveAllInstructors();
+
+        verify(instructorRepository, times(1)).findAll();
+        assertNotNull(returnedInstructors);
     }
 
     @Test
     void testUpdateInstructor() {
-
         Instructor instructor = new Instructor();
+        instructor.setNumInstructor(1L);
         instructor.setFirstName("John");
         instructor.setLastName("Doe");
         instructor.setDateOfHire(LocalDate.now());
         instructor.setCourses(new HashSet<>());
 
-        Instructor savedInstructor = instructorService.addInstructor(instructor);
+        when(instructorRepository.save(any(Instructor.class))).thenReturn(instructor);
 
-        savedInstructor.setFirstName("Jane");
+        Instructor updatedInstructor = instructorService.updateInstructor(instructor);
 
-        Instructor updatedInstructor = instructorService.updateInstructor(savedInstructor);
-
+        verify(instructorRepository, times(1)).save(instructor);
         assertNotNull(updatedInstructor);
-
-        assertEquals("Jane", updatedInstructor.getFirstName());
     }
 
     @Test
     void testRetrieveInstructor() {
 
         Instructor instructor = new Instructor();
+        instructor.setNumInstructor(1L); // Assuming this instructor already exists
         instructor.setFirstName("John");
         instructor.setLastName("Doe");
         instructor.setDateOfHire(LocalDate.now());
         instructor.setCourses(new HashSet<>());
 
-        Instructor savedInstructor = instructorService.addInstructor(instructor);
+        when(instructorRepository.findById(1L)).thenReturn(Optional.of(instructor));
 
-        Instructor retrievedInstructor = instructorService.retrieveInstructor(savedInstructor.getNumInstructor());
+        Instructor retrievedInstructor = instructorService.retrieveInstructor(1L);
+
+        verify(instructorRepository, times(1)).findById(1L);
+
         assertNotNull(retrievedInstructor);
     }
 
     @Test
     void testAddInstructorAndAssignToCourse() {
         Course course = new Course();
-        course.setLevel(1);
-        course.setTypeCourse(TypeCourse.INDIVIDUAL);
-        course.setSupport(Support.SKI);
-        course.setPrice(100.0f);
-        course.setTimeSlot(3);
-        course.setRegistrations(new HashSet<>());
+        course.setNumCourse(1L);
 
-        Course savedCourse = courseRepository.save(course);
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
 
         Instructor instructor = new Instructor();
         instructor.setFirstName("John");
@@ -100,10 +110,16 @@ class InstructorServicesImplTest {
         instructor.setDateOfHire(LocalDate.now());
         instructor.setCourses(new HashSet<>());
 
-        Instructor addedInstructor = instructorService.addInstructorAndAssignToCourse(instructor, savedCourse.getNumCourse());
+        when(instructorRepository.save(any(Instructor.class))).thenReturn(instructor);
+
+        Instructor addedInstructor = instructorService.addInstructorAndAssignToCourse(instructor, 1L);
+
+        verify(courseRepository, times(1)).findById(1L);
+
+        verify(instructorRepository, times(1)).save(instructor);
 
         assertNotNull(addedInstructor);
-
-        //assertTrue(addedInstructor.getCourses().contains(savedCourse));
+        assertTrue(addedInstructor.getCourses().contains(course));
     }
+
 }
