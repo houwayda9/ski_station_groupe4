@@ -68,7 +68,7 @@ stage('Docker Compose') {
             steps {
                 script {
                     // Run Docker Compose
-                    sh 'docker-compose build'
+                    sh 'docker-compose run -d'
                     def gitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
                     
                     def gitHashTaggedImage = "houwayda/devops_esprit:${env.BUILD_NUMBER}"
