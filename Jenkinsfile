@@ -13,7 +13,7 @@ pipeline {
     agent any
     stages {
 
-        stage('MVN CLEAN'){
+        stage('MVN CLEAN & INSTALL'){
             steps {
                 sh 'mvn clean'
                 sh 'mvn install'
@@ -23,6 +23,11 @@ pipeline {
             steps {
                 echo 'ARTIFACT CONSTRUCTION...'
                 sh 'mvn package -Dmaven.test.skip=true'
+            }
+        }
+        stage('TEST') {
+            steps {
+                sh 'mvn test'
             }
         }
         stage('MVN SONARQUBE') {
@@ -43,7 +48,7 @@ pipeline {
                     def gitHashTaggedImage = "jaouherbelhadj/devops_validation:${env.BUILD_NUMBER}"
                     sh "docker tag springboot-app $gitHashTaggedImage"
 
-                    docker.withRegistry('', 'dockerHub') {
+                    docker.withRegistry('', registryCredential) {
                         sh "docker push $gitHashTaggedImage"
                     }
                 }
